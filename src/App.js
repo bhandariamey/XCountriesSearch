@@ -32,7 +32,7 @@ export default function App() {
 
   return (
     <>
-      <input placeholder="Search a country" onChange={handleChange} value={country}/>
+      <input placeholder="Search a country" onChange={handleChange} value={country} type="text"/>
 
       <div className={styles.container}>
         {data.map((country) => {
