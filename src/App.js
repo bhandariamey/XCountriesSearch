@@ -37,7 +37,7 @@ export default function App() {
       <div className={styles.container}>
         {data.map((country) => {
           return (
-            <div key={country.name.common} className={styles.wrapper}>
+            <div key={country.name.common} className={styles.countryCard}>
               <img
                 className={styles.image}
                 src={country.flags.png}
