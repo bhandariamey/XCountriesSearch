@@ -1,25 +1,55 @@
-import logo from './logo.svg';
-import './App.css';
+import styles from "./App.module.css";
+import { useState, useEffect } from "react";
 
-function App() {
+
+export default function App() {
+  const [data, setData] = useState([]);
+  const [country, setCountry] = useState("");
+
+
+  useEffect(() => {
+    const getCountries = async () => {
+      try {
+        const response = await fetch("https://restcountries.com/v3.1/all");
+        const responseData = await response.json();
+        setData(responseData);
+      } catch (e) {
+        console.log("Error caught");
+      }
+    };
+
+    getCountries();
+  }, []);
+
+  useEffect(()=>{
+      setData(data.filter((ele)=>(ele.name.common).includes(country))
+    )
+  },[country])
+
+  const handleChange = (e) => {
+    setCountry(e.target.value)
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <input placeholder="Search a country" onChange={handleChange} value={country}/>
+
+      <div className={styles.container}>
+        {data.map((country) => {
+          return (
+            <div key={country.name.common} className={styles.wrapper}>
+              <img
+                className={styles.image}
+                src={country.flags.png}
+                alt={country.name.common}
+              />
+
+              <p className="{styles.countryName}">{country.name.common}</p>
+            </div>
+          );
+        })}
+      </div>
+
+    </>
   );
 }
-
-export default App;
