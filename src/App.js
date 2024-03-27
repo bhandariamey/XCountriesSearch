@@ -6,6 +6,8 @@ export default function App() {
   const [data, setData] = useState([]);
   const [country, setCountry] = useState("");
 
+  const [searchedData, setSearchedData] = useState("")
+
 
   useEffect(() => {
     const getCountries = async () => {
@@ -19,23 +21,40 @@ export default function App() {
     };
 
     getCountries();
-  }, []);
+  },[]);
 
-  useEffect(()=>{
-      setData(data.filter((ele)=>(ele.name.common).includes(country))
-    )
-  },[country])
+  // useEffect(()=>{
+  //     // setData(data.filter((ele)=>(ele.name.common).includes(country))
+
+  //   )
+  // },[country])
+
+  // const handleChange = (e) => {
+  //   setCountry(e.target.value)
+  // }
 
   const handleChange = (e) => {
-    setCountry(e.target.value)
-  }
+    const searchTerm = e.target.value;
+    setCountry(searchTerm);
+  
+    if (!searchTerm) {
+      setSearchedData([]);
+      return;
+    }
+  
+    const filteredData = data.filter((country) =>
+      country.name.common.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setSearchedData(filteredData);
+  };
+  
 
   return (
     <>
       <input placeholder="Search a country" onChange={handleChange} value={country} type="text"/>
 
       <div className={styles.container}>
-        {data.map((country) => {
+        {(country ? searchedData : data).map((country) => {
           return (
             <div key={country.name.common} className={styles.countryCard}>
               <img
@@ -49,6 +68,7 @@ export default function App() {
           );
         })}
       </div>
+      
 
     </>
   );
