@@ -46,7 +46,7 @@ export default function App() {
 
       <div className={styles.container}>
         {(searchedData.length > 0 ? searchedData : data).map((country) => (
-          <div key={country.name.common} className={styles.countryCard}>
+          <div key={country.name.common} id={styles.countryCard} className="countryCard">
             <img
               className={styles.image}
               src={country.flags.png}

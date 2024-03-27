@@ -5,7 +5,7 @@
   align-items: center;
 }
 
-.countryCard {
+#countryCard {
   display: flex;
   flex-direction: column;
   justify-content: center;
