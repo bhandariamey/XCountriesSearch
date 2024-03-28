@@ -1,62 +1,65 @@
-import styles from "./App.module.css";
-import { useState, useEffect } from "react";
 
-export default function App() {
-  const [data, setData] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+import React, { useEffect, useState } from 'react';
+import "./styles.css";
 
-  useEffect(() => {
-    const getCountries = async () => {
-      try {
-        const response = await fetch("https://restcountries.com/v3.1/all");
-        if (!response.ok) {
-          throw new Error("Failed to fetch countries");
+export default function DisplayCountries() {
+    const [countryData, setCountryData] = useState([]);
+    const [searchText, setSearchText] = useState("");
+    const [searchResult, setSearchResult] = useState([]);
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    async function fetchData() {
+        try {
+            const response = await fetch('https://restcountries.com/v3.1/all');
+            const data = await response.json();
+            setCountryData(data);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            setCountryData([]);
         }
-        const responseData = await response.json();
-        setData(responseData);
-        setSearchResults(responseData);
-      } catch (error) {
-        console.error("Error caught:", error);
-      }
+    }
+
+    useEffect(() => {
+        if (!searchText) {
+            setSearchResult([]);
+            return;
+        }
+
+        const result = countryData.filter(country =>
+            country.name.common.toLowerCase().includes(searchText.toLowerCase())
+        );
+        setSearchResult(result);
+    }, [searchText, countryData]);
+
+    function displayFinalResult() {
+        const dataToDisplay = searchText ? searchResult : countryData;
+        return dataToDisplay.map(country => (
+            <div className="countryCard" key={country.ccn3}>
+                <img src={country.flags.png} alt={country.flags.alt} width="100" height="100" />
+                <h2>{country.name.common}</h2>
+            </div>
+        ));
+    }
+
+    const handleSearchChange = (e) => {
+        setSearchText(e.target.value);
     };
 
-    getCountries();
-  }, []);
-
-  const handleSearch = (e) => {
-    const searchTerm = e.target.value.toLowerCase();
-    setSearchTerm(searchTerm);
-    const filteredCountries = data.filter((country) =>
-    country.name.common.toLowerCase().includes(searchTerm)
-    );
-    setSearchResults(filteredCountries);
-  };
-
-
-
-  return (
-    <div>
-      <input
-        type="text"
-        placeholder="Search for a country..."
-        value={searchTerm}
-        onChange={handleSearch}
-      />
-
-      <div className={styles.container}>
-        {searchResults.map((country) => (
-          <div key={country.name.common} className={styles.countryCard}>
-            <img
-              className={styles.image}
-              src={country.flags.png}
-              alt={country.name.common}
+    return (
+        <div className="container">
+            <input
+                type="text"
+                value={searchText}
+                onChange={handleSearchChange}
+                className="input"
+                placeholder='Search for countries'
             />
-            <h2>{country.name.common}</h2>
-            
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+            <div className="countryContainer">
+                {displayFinalResult()}
+            </div>
+        </div>
+    );
 }
